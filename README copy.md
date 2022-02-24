@@ -1,0 +1,5 @@
+# stone_game_gtk4
+
+
+compile 
+gcc `pkg-config --cflags gtk4` main_window.c -o main `pkg-config --libs gtk4`
