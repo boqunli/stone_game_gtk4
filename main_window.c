@@ -243,15 +243,15 @@ start_game (GtkWidget *widget,
   gtk_box_append(GTK_BOX(box11),label3);
   gtk_box_append(GTK_BOX(box11),label4);
 
-  GtkWidget* button1 = gtk_button_new_with_label("拿一个");
+  GtkWidget* button1 = gtk_button_new_with_label("拿1个");
   g_signal_connect(G_OBJECT(button1),"clicked",G_CALLBACK(change_heap1), window);
   gtk_box_append(GTK_BOX(box2),button1);
   gtk_widget_show(button1);
-  GtkWidget* button2 = gtk_button_new_with_label("拿两个");
+  GtkWidget* button2 = gtk_button_new_with_label("拿2个");
   g_signal_connect(G_OBJECT(button2),"clicked",G_CALLBACK(change_heap2), window);
   gtk_box_append(GTK_BOX(box2),button2);
   gtk_widget_show(button2);
-  GtkWidget* button3 = gtk_button_new_with_label("拿三个");
+  GtkWidget* button3 = gtk_button_new_with_label("拿3个");
   g_signal_connect(G_OBJECT(button3),"clicked",G_CALLBACK(change_heap3), window);
   gtk_box_append(GTK_BOX(box2),button3);
   gtk_widget_show(button3);
