@@ -270,54 +270,41 @@ static void
 settings (GtkWidget *widget,
              gpointer   data)
 {
+  GError *err = NULL;
   // the callback function of settings
   g_print ("Setting\n");
-  GtkApplication *app = GTK_APPLICATION(data);
-  // GtkWidget* window = gtk_application_window_new (app);
-  GtkWidget* window = gtk_window_new();
+  // GtkApplication *app = GTK_APPLICATION(data);
+  GtkBuilder* builder = gtk_builder_new();
+  gboolean built = gtk_builder_add_from_file(builder, "settings.ui", &err);
+  // https://docs.gtk.org/gtk4/method.Builder.add_from_file.html
+  // TRUE on success, FALSE if an error occurred.
+  // g_assert (built == TRUE);
+  if (err) {
+    fprintf (stderr, "Unable to read file: %s\n", err->message);
+    g_error_free(err);
+    return;
+  }
+  GObject* window = gtk_builder_get_object(builder, "dialog_settings");
 
-  gtk_window_set_title (GTK_WINDOW (window), "STONE_GAME_SETTING 设置");
-  gtk_window_set_default_size (GTK_WINDOW (window), 400, 300);
+  // gtk_window_set_title (GTK_WINDOW (window), "STONE_GAME_SETTING 设置");
+  // gtk_window_set_default_size (GTK_WINDOW (window), 400, 300);
+  // GtkDialog mapped without a transient parent. This is discouraged.
+  gtk_window_set_transient_for (GTK_WINDOW (window), GTK_WINDOW (data));
 
-  // boxes: box1 
-  //        ----
-  //        box2
-  GtkWidget* box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
-  gtk_widget_set_halign (box, GTK_ALIGN_CENTER);
-  gtk_widget_set_valign (box, GTK_ALIGN_CENTER);
-  GtkWidget* box1 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-  gtk_widget_set_halign (box1, GTK_ALIGN_CENTER);
-  gtk_widget_set_valign (box1, GTK_ALIGN_CENTER);
-  GtkWidget* box2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
-  gtk_widget_set_halign (box2, GTK_ALIGN_CENTER);
-  gtk_widget_set_valign (box2, GTK_ALIGN_CENTER);
-  GtkWidget* sep = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
-  gtk_window_set_child (GTK_WINDOW (window), box);
-  gtk_box_append (GTK_BOX(box),box1);
-  gtk_box_append (GTK_BOX(box),sep);
-  gtk_box_append (GTK_BOX(box),box2);
+  // GObject* label1 = gtk_builder_get_object(builder, "number_label");
+  GObject* entry1 = gtk_builder_get_object(builder, "number_entry");
 
-  // labels
-  GtkWidget* label1 = gtk_label_new("请输入个数：");
-  GtkWidget* entry1 = gtk_entry_new();
-  gtk_box_append(GTK_BOX(box1),label1);
-  gtk_box_append(GTK_BOX(box1),entry1);
+  GObject* button1 = gtk_builder_get_object(builder, "clear_button");
+  g_signal_connect(GTK_WIDGET (button1), "clicked", G_CALLBACK(on_button_clicked_clear), entry1);
+  gtk_widget_show (GTK_WIDGET (button1));
 
-  GtkWidget* button1 = gtk_button_new_with_label("清空");
-  g_signal_connect(G_OBJECT(button1),"clicked",G_CALLBACK(on_button_clicked_clear), entry1);
-  gtk_box_append(GTK_BOX(box2),button1);
-  gtk_widget_show(button1);
+  GObject* button2 = gtk_builder_get_object(builder, "confirm_button");
+  g_signal_connect(GTK_WIDGET (button2), "clicked", G_CALLBACK(on_button_clicked_set), GTK_WIDGET (entry1));
+  g_signal_connect_swapped(GTK_WIDGET (button2), "clicked", G_CALLBACK(gtk_window_destroy), GTK_WINDOW (window));
+  gtk_widget_show (GTK_WIDGET (button2));
 
-  GtkWidget* button2 = gtk_button_new_with_label("确认");
-  g_signal_connect(G_OBJECT(button2), "clicked", G_CALLBACK(on_button_clicked_set), entry1);
-  g_signal_connect_swapped(G_OBJECT(button2), "clicked", G_CALLBACK(gtk_window_destroy), window);
-  gtk_box_append(GTK_BOX(box2),button2);
-  gtk_widget_show(button2);
-
-  gtk_widget_show (window);
+  gtk_widget_show (GTK_WIDGET (window));
 }
-
-
 
 static void
 activate (GtkApplication *app,
@@ -344,7 +331,7 @@ activate (GtkApplication *app,
   button_start = gtk_button_new_with_label ("ENTER GAME 开始游戏");
   button_exit = gtk_button_new_with_label ("EXIT GAME 退出游戏");
 
-  g_signal_connect (button_settings, "clicked", G_CALLBACK (settings), app);
+  g_signal_connect (button_settings, "clicked", G_CALLBACK (settings), window);
   g_signal_connect (button_start, "clicked", G_CALLBACK (start_game), app);
   g_signal_connect (button_exit, "clicked", G_CALLBACK (exit_game), window);
   // g_signal_connect_swapped (button_exit, "clicked", G_CALLBACK (gtk_window_destroy), window);

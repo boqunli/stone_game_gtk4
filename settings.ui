@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <object class="GtkDialog" id="dialog_settings">
+    <property name="title" translatable="yes">STONE_GAME_SETTING 设置</property>
+    <property name="resizable">1</property>
+    <property name="modal">1</property>
+    <child internal-child="content_area">
+      <object class="GtkBox" id="content_area">
+        <child>
+          <object class="GtkGrid" id="grid">
+            <property name="margin-start">12</property>
+            <property name="margin-end">12</property>
+            <property name="margin-top">12</property>
+            <property name="margin-bottom">12</property>
+            <property name="row-spacing">12</property>
+            <property name="column-spacing">12</property>
+            <child>
+              <object class="GtkLabel" id="number_label">
+                <property name="label">请输入个数:</property>
+                <property name="xalign">1</property>
+                <layout>
+                  <property name="column">0</property>
+                  <property name="row">0</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="GtkEntry" id="number_entry">
+                <layout>
+                  <property name="column">1</property>
+                  <property name="row">0</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="GtkSeparator" id="midsep">
+                <layout>
+                  <property name="column">0</property>
+                  <property name="row">1</property>
+                  <property name="column-span">2</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="clear_button">
+                <property name="label">清空</property>
+                <layout>
+                  <property name="column">0</property>
+                  <property name="row">2</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="confirm_button">
+                <property name="label">确认</property>
+                <layout>
+                  <property name="column">1</property>
+                  <property name="row">2</property>
+                </layout>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>
