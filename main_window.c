@@ -270,32 +270,41 @@ static void
 settings (GtkWidget *widget,
              gpointer   data)
 {
+  GError *err = NULL;
   // the callback function of settings
   g_print ("Setting\n");
   // GtkApplication *app = GTK_APPLICATION(data);
   GtkBuilder* builder = gtk_builder_new();
-  gtk_builder_add_from_file(builder, "settings.ui", NULL);
-  GObject* window = gtk_builder_get_object(builder, "stone_game_settings");
+  gboolean built = gtk_builder_add_from_file(builder, "settings.ui", &err);
+  // https://docs.gtk.org/gtk4/method.Builder.add_from_file.html
+  // TRUE on success, FALSE if an error occurred.
+  // g_assert (built == TRUE);
+  if (err) {
+    fprintf (stderr, "Unable to read file: %s\n", err->message);
+    g_error_free(err);
+    return;
+  }
+  GObject* window = gtk_builder_get_object(builder, "dialog_settings");
 
-  gtk_window_set_title (GTK_WINDOW (window), "STONE_GAME_SETTING 设置");
-  gtk_window_set_default_size (GTK_WINDOW (window), 400, 300);
+  // gtk_window_set_title (GTK_WINDOW (window), "STONE_GAME_SETTING 设置");
+  // gtk_window_set_default_size (GTK_WINDOW (window), 400, 300);
+  // GtkDialog mapped without a transient parent. This is discouraged.
+  gtk_window_set_transient_for (GTK_WINDOW (window), GTK_WINDOW (data));
 
-  GObject* label1 = gtk_builder_get_object(builder, "number_label");
+  // GObject* label1 = gtk_builder_get_object(builder, "number_label");
   GObject* entry1 = gtk_builder_get_object(builder, "number_entry");
 
   GObject* button1 = gtk_builder_get_object(builder, "clear_button");
-  g_signal_connect(button1,"clicked",G_CALLBACK(on_button_clicked_clear), entry1);
+  g_signal_connect(GTK_WIDGET (button1), "clicked", G_CALLBACK(on_button_clicked_clear), entry1);
   gtk_widget_show (GTK_WIDGET (button1));
 
   GObject* button2 = gtk_builder_get_object(builder, "confirm_button");
-  g_signal_connect(button2, "clicked", G_CALLBACK(on_button_clicked_set), entry1);
-  g_signal_connect_swapped(button2, "clicked", G_CALLBACK(gtk_window_destroy), window);
+  g_signal_connect(GTK_WIDGET (button2), "clicked", G_CALLBACK(on_button_clicked_set), GTK_WIDGET (entry1));
+  g_signal_connect_swapped(GTK_WIDGET (button2), "clicked", G_CALLBACK(gtk_window_destroy), GTK_WINDOW (window));
   gtk_widget_show (GTK_WIDGET (button2));
 
   gtk_widget_show (GTK_WIDGET (window));
 }
-
-
 
 static void
 activate (GtkApplication *app,
@@ -322,7 +331,7 @@ activate (GtkApplication *app,
   button_start = gtk_button_new_with_label ("ENTER GAME 开始游戏");
   button_exit = gtk_button_new_with_label ("EXIT GAME 退出游戏");
 
-  g_signal_connect (button_settings, "clicked", G_CALLBACK (settings), app);
+  g_signal_connect (button_settings, "clicked", G_CALLBACK (settings), window);
   g_signal_connect (button_start, "clicked", G_CALLBACK (start_game), app);
   g_signal_connect (button_exit, "clicked", G_CALLBACK (exit_game), window);
   // g_signal_connect_swapped (button_exit, "clicked", G_CALLBACK (gtk_window_destroy), window);

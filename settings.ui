@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <object class="GtkDialog" id="stone_game_settings">
+  <object class="GtkDialog" id="dialog_settings">
     <property name="title" translatable="yes">STONE_GAME_SETTING 设置</property>
     <property name="resizable">1</property>
     <property name="modal">1</property>
@@ -37,7 +37,7 @@
                 <layout>
                   <property name="column">0</property>
                   <property name="row">1</property>
-                  <property name="row-span">2</property>
+                  <property name="column-span">2</property>
                 </layout>
               </object>
             </child>
@@ -63,5 +63,5 @@
         </child>
       </object>
     </child>
-  </template>
+  </object>
 </interface>
